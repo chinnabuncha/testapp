@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family: Arial;
+background:#f2f4f7;
+text-align:center;
+padding:30px;
+}
+
+.card{
+background:white;
+max-width:500px;
+margin:auto;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+input{
+width:80%;
+padding:12px;
+font-size:18px;
+}
+
+button{
+margin-top:10px;
+padding:12px 25px;
+font-size:18px;
+background:#06c755;
+color:white;
+border:none;
+border-radius:6px;
+}
+
+.result{
+margin-top:20px;
+text-align:left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>ค้นหาเลขหนังสือ</h2>
+
+<input id="search" placeholder="ใส่เลขหนังสือ">
+
+<br>
+
+<button onclick="search()">ค้นหา</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script>
+
+const sheetURL = "ใส่ลิงก์ CSV ที่ publish";
+
+async function search(){
+
+let id = document.getElementById("search").value;
+
+let res = await fetch(sheetURL);
+
+let text = await res.text();
+
+let rows = text.split("\n");
+
+let found = "";
+
+rows.forEach(r=>{
+
+let col = r.split(",");
+
+if(col[0] == id){
+
+found = `
+<b>เลขหนังสือ:</b> ${col[0]}<br>
+<b>วันที่:</b> ${col[1]}<br>
+<b>เรื่อง:</b> ${col[2]}<br>
+<b>ผู้รับผิดชอบ:</b> ${col[3]}
+`;
+
+}
+
+});
+
+if(found==""){
+found="ไม่พบข้อมูล";
+}
+
+document.getElementById("result").innerHTML = found;
+
+}
+
+</script>
+
+</body>
+</html>
