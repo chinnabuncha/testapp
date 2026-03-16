@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -16,30 +17,48 @@ padding:30px;
 background:white;
 max-width:500px;
 margin:auto;
-padding:20px;
-border-radius:10px;
+padding:25px;
+border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2{
+margin-bottom:20px;
 }
 
 input{
 width:80%;
 padding:12px;
 font-size:18px;
+border-radius:6px;
+border:1px solid #ccc;
 }
 
 button{
-margin-top:10px;
+margin-top:15px;
 padding:12px 25px;
 font-size:18px;
 background:#06c755;
 color:white;
 border:none;
 border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#05b34d;
 }
 
 .result{
-margin-top:20px;
+margin-top:25px;
 text-align:left;
+font-size:18px;
+}
+
+.box{
+background:#f7f7f7;
+padding:15px;
+border-radius:8px;
 }
 
 </style>
@@ -52,7 +71,7 @@ text-align:left;
 
 <h2>ค้นหาเลขหนังสือ</h2>
 
-<input id="search" placeholder="ใส่เลขหนังสือ">
+<input id="search" placeholder="เช่น สนธ.02/24794">
 
 <br>
 
@@ -64,11 +83,12 @@ text-align:left;
 
 <script>
 
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyOAUYA-qhwwT2fn9az3mWDachdAhoI_ewXOtVZ-k8RHX4qU_c5qQ1vYhYeahiO0C3iw-eR6sMO7Yh/pub?gid=1592065811&single=true&output=csv";
+// ใส่ลิงก์ CSV ของ Google Sheet
+const sheetURL = "ใส่ลิงก์ CSV";
 
 async function search(){
 
-let id = document.getElementById("search").value;
+let id = document.getElementById("search").value.trim().toLowerCase();
 
 let res = await fetch(sheetURL);
 
@@ -82,13 +102,17 @@ rows.forEach(r=>{
 
 let col = r.split(",");
 
-if(col[0] == id){
+if(col[0] && col[0].toLowerCase().trim().includes(id)){
 
-found = `
-<b>เลขหนังสือ:</b> ${col[0]}<br>
-<b>วันที่:</b> ${col[1]}<br>
-<b>เรื่อง:</b> ${col[2]}<br>
-<b>ผู้รับผิดชอบ:</b> ${col[3]}
+found += `
+<div class="box">
+<b>เลขหนังสือ:</b> ${col[0]} <br>
+<b>วันที่:</b> ${col[1]} <br>
+<b>จาก:</b> ${col[2]} <br>
+<b>ถึง:</b> ${col[3]} <br>
+<b>เรื่อง:</b> ${col[4]}
+</div>
+<br>
 `;
 
 }
@@ -96,12 +120,25 @@ found = `
 });
 
 if(found==""){
-found="ไม่พบข้อมูล";
+
+found="<b>ไม่พบข้อมูล</b>";
+
 }
 
 document.getElementById("result").innerHTML = found;
 
 }
+
+// กด Enter เพื่อค้นหา
+document.getElementById("search").addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+search();
+
+}
+
+});
 
 </script>
 
